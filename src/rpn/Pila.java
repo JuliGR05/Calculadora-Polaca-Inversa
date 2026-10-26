@@ -48,4 +48,25 @@ public class Pila {
     contador =0;
    }
 
+   public double obtener(int posicion){
+    if (posicion < 0 || posicion >= contador){
+        throw new IndexOutOfBoundsException("Posición inválida: " + posicion);
+    }
+    return numeros[posicion];
+   }
+
+   public double[] aArreglo(){
+   return Arrays.copyOf(numeros, contador);
+   }
+
+   public void reemplazarContenido(double[]valores){
+    numeros = Arrays.copyOf(valores, Math.max(valores.length, 10));
+    contador = valores.length; 
+   }
+
+   @Override
+    public String toString() {
+        return Arrays.toString(aArreglo());
+    }
+
 }

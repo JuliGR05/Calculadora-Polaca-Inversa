@@ -48,5 +48,41 @@ public class PruebasRpn {
 
         System.out.println(fallos == 0 ? "\nSin fallos." : "\nFallos: " + fallos);
         if (fallos > 0) System.exit(1);
+
+
+        // ---- Pruebas del issue #2 ----
+    Pila q = new Pila();
+    q.reemplazarContenido(new double[]{5, 3, 8});
+    verificar("reemplazar: tamano 3", q.tamano() == 3);
+    verificar("obtener(0) es 5 (fondo)", q.obtener(0) == 5);
+    verificar("obtener(2) es 8 (tope)", q.obtener(2) == 8);
+    verificar("verTope es 8", q.verTope() == 8);
+    verificar("toString", q.toString().equals("[5.0, 3.0, 8.0]"));
+    verificar("aArreglo devuelve [5, 3, 8]",
+            java.util.Arrays.equals(q.aArreglo(), new double[]{5, 3, 8}));
+
+    q.apilar(9);
+    verificar("apilar despues de reemplazar", q.verTope() == 9 && q.tamano() == 4);
+
+    Pila r = new Pila();
+    r.reemplazarContenido(new double[]{});
+    verificar("reemplazar con vacio", r.estaVacia());
+    r.apilar(1);
+    verificar("apilar tras reemplazar con vacio", r.verTope() == 1);
+
+    try {
+        q.obtener(4);
+        verificar("obtener(4) lanza error", false);
+    } catch (IndexOutOfBoundsException e) {
+        verificar("obtener(4) lanza error", true);
     }
+    try {
+        q.obtener(-1);
+        verificar("obtener(-1) lanza error", false);
+    } catch (IndexOutOfBoundsException e) {
+        verificar("obtener(-1) lanza error", true);
+    }
+
+    }
+
 }

@@ -9,6 +9,17 @@ public class PruebasRpn {
         if (!condicion) fallos++;
     }
 
+    static void verificarError(String nombre, Runnable accion, String mensajeEsperado) {
+        try {
+            accion.run();
+            verificar(nombre, false);
+        } catch (RuntimeException e) {
+            verificar(nombre, e instanceof IllegalArgumentException
+                    && e.getMessage() != null
+                    && e.getMessage().toLowerCase().contains(mensajeEsperado.toLowerCase()));
+        }
+    }
+
     public static void main(String[] args) {
 
         // ---- Pruebas de Pila (issue #1) ----
@@ -111,6 +122,47 @@ public class PruebasRpn {
         calc4.procesarToken("*");
         verificar("6 7 * = 42", p4.verTope() == 42);
 
+
+        // ---- Pruebas del issue #4 ----
+        Pila p5 = new Pila();
+        CalculadoraRPN calc5 = new CalculadoraRPN(p5);
+        verificar("evaluar 3 4 + 2 * = 14", calc5.evaluar("3 4 + 2 *") == 14);
+        verificar("evaluar deja el resultado en el tope", p5.verTope() == 14);
+        verificar("evaluar deja un solo resultado", p5.tamano() == 1);
+
+        Pila p6 = new Pila();
+        CalculadoraRPN calc6 = new CalculadoraRPN(p6);
+        verificar("evaluar expresión RPN compuesta = 14",
+                calc6.evaluar("5 1 2 + 4 * + 3 -") == 14);
+        verificar("expresión compuesta deja un solo resultado", p6.tamano() == 1);
+
+        Pila p7 = new Pila();
+        p7.apilar(42);
+        CalculadoraRPN calc7 = new CalculadoraRPN(p7);
+        verificarError("evaluar detecta operandos insuficientes",
+                () -> calc7.evaluar("+"), "operandos insuficientes");
+        verificar("error por operandos restaura la pila", p7.tamano() == 1 && p7.verTope() == 42);
+
+        Pila p8 = new Pila();
+        p8.apilar(42);
+        CalculadoraRPN calc8 = new CalculadoraRPN(p8);
+        verificarError("evaluar detecta división por cero",
+                () -> calc8.evaluar("10 0 /"), "división por cero");
+        verificar("error de división restaura la pila", p8.tamano() == 1 && p8.verTope() == 42);
+
+        Pila p9 = new Pila();
+        p9.apilar(99);
+        CalculadoraRPN calc9 = new CalculadoraRPN(p9);
+        verificarError("evaluar detecta token inválido",
+                () -> calc9.evaluar("3 4 + xyz"), "token inválido");
+        verificar("token inválido restaura la pila", p9.tamano() == 1 && p9.verTope() == 99);
+
+        Pila p10 = new Pila();
+        p10.apilar(8);
+        CalculadoraRPN calc10 = new CalculadoraRPN(p10);
+        verificarError("evaluar rechaza expresión vacía",
+                () -> calc10.evaluar("  \t "), "expresión");
+        verificar("expresión vacía conserva la pila", p10.tamano() == 1 && p10.verTope() == 8);
 
         System.out.println(fallos == 0 ? "\nSin fallos." : "\nFallos: " + fallos);
         if (fallos > 0) System.exit(1);

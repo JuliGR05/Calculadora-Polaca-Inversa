@@ -185,11 +185,30 @@ public class PruebasRpn {
                 java.util.Arrays.equals(UtilidadesPila.buscar(b3, 4), new int[]{0}));
         verificar("un solo elemento: buscar 9 = arreglo vacio",
                 UtilidadesPila.buscar(b3, 9).length == 0);
-                
+        
+         // ---- Pruebas del issue #8 ----
+        Memoria m = new Memoria();
+
+        m.guardar("x", 5);
+        verificar("existe x despues de guardar", m.existe("x"));
+        verificar("obtener x devuelve 5", m.obtener("x") == 5);
+        verificar("y no existe todavia", !m.existe("y"));
+
+        m.guardar("x", 8);
+        verificar("guardar de nuevo sobrescribe el valor", m.obtener("x") == 8);
+
+        m.guardar("y", 2.5);
+        verificar("varias variables conviven", m.obtener("x") == 8 && m.obtener("y") == 2.5);
+
+        try {
+            m.obtener("z");
+            verificar("obtener variable inexistente lanza error", false);
+        } catch (IllegalArgumentException e) {
+            verificar("obtener variable inexistente lanza error", true);
+        }
+        
         System.out.println(fallos == 0 ? "\nSin fallos." : "\nFallos: " + fallos);
         if (fallos > 0) System.exit(1);
     }
-
-
 
 }

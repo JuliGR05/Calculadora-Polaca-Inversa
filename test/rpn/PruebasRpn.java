@@ -164,6 +164,28 @@ public class PruebasRpn {
                 () -> calc10.evaluar("  \t "), "expresión");
         verificar("expresión vacía conserva la pila", p10.tamano() == 1 && p10.verTope() == 8);
 
+
+        // ---- Pruebas del issue #6 ----
+        Pila b1 = new Pila();
+        b1.reemplazarContenido(new double[]{5, 3, 5, 8});
+        verificar("buscar 5 en [5,3,5,8] = {0, 2}",
+                java.util.Arrays.equals(UtilidadesPila.buscar(b1, 5), new int[]{0, 2}));
+        verificar("buscar 8 en [5,3,5,8] = {3}",
+                java.util.Arrays.equals(UtilidadesPila.buscar(b1, 8), new int[]{3}));
+        verificar("buscar 7 (no esta) = arreglo vacio",
+                UtilidadesPila.buscar(b1, 7).length == 0);
+
+        Pila b2 = new Pila();
+        verificar("buscar en pila vacia = arreglo vacio",
+                UtilidadesPila.buscar(b2, 5).length == 0);
+
+        Pila b3 = new Pila();
+        b3.apilar(4);
+        verificar("un solo elemento: buscar 4 = {0}",
+                java.util.Arrays.equals(UtilidadesPila.buscar(b3, 4), new int[]{0}));
+        verificar("un solo elemento: buscar 9 = arreglo vacio",
+                UtilidadesPila.buscar(b3, 9).length == 0);
+                
         System.out.println(fallos == 0 ? "\nSin fallos." : "\nFallos: " + fallos);
         if (fallos > 0) System.exit(1);
     }

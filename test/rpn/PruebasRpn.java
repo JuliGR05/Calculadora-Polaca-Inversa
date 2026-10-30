@@ -186,7 +186,31 @@ public class PruebasRpn {
         verificar("un solo elemento: buscar 9 = arreglo vacio",
                 UtilidadesPila.buscar(b3, 9).length == 0);
         
-         // ---- Pruebas del issue #8 ----
+         // ---- Pruebas del issue #7 ----
+        Pila o1 = new Pila();
+        o1.reemplazarContenido(new double[]{5, 3, 5, 8});
+        UtilidadesPila.ordenarDescendente(o1);
+        verificar("ordenarDescendente: [5,3,5,8] -> [8,5,5,3]",
+                java.util.Arrays.equals(o1.aArreglo(), new double[]{8, 5, 5, 3}));
+        verificar("ordenarDescendente deja el tope en el menor valor", o1.verTope() == 3);
+
+        Pila o2 = new Pila();
+        o2.reemplazarContenido(new double[]{5, 3, 5, 8});
+        UtilidadesPila.ordenarDescendente(o2);
+        verificar("ordenarDescendente con repetidos: [8,5,5,3]",
+                o2.toString().equals("[8.0, 5.0, 5.0, 3.0]"));
+
+        Pila o3 = new Pila();
+        UtilidadesPila.ordenarDescendente(o3);
+        verificar("ordenarDescendente en pila vacia", o3.estaVacia());
+
+        Pila o4 = new Pila();
+        o4.reemplazarContenido(new double[]{7});
+        UtilidadesPila.ordenarDescendente(o4);
+        verificar("ordenarDescendente con un elemento",
+                java.util.Arrays.equals(o4.aArreglo(), new double[]{7}));
+
+        // ---- Pruebas del issue #8 ----
         Memoria m = new Memoria();
 
         m.guardar("x", 5);

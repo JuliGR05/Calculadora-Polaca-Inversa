@@ -3,9 +3,15 @@ package rpn;
 public class CalculadoraRPN {
 
     private Pila pila;
+    private Memoria memoria;
 
     public CalculadoraRPN (Pila pila){
+    this(pila, new Memoria());
+    }
+
+    public CalculadoraRPN (Pila pila, Memoria memoria){
     this.pila = pila;
+    this.memoria = memoria;
     }
 
     public void procesarToken(String token) {
@@ -38,10 +44,15 @@ public class CalculadoraRPN {
             return;
         }
 
+        if (memoria.existe(token)) {
+            pila.apilar(memoria.obtener(token));
+            return;
+        }
+
         try {
             pila.apilar(Double.parseDouble(token));
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Token inválido: " + token, e);
+            throw new IllegalArgumentException("Token inválido: no es un número ni una variable definida: " + token, e);
         }
     }
 

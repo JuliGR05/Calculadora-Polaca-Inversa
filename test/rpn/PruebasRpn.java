@@ -258,6 +258,45 @@ public class PruebasRpn {
         calcV4.procesarToken("y");
         verificar("procesarToken apila el valor de la variable", v4.verTope() == 2.5);
 
+        // ---- Pruebas de integracion del issue #10 ----
+        // Flujo completo: guardar variable, evaluar, buscar y ordenar
+        Pila i1 = new Pila();
+        Memoria mi1 = new Memoria();
+        mi1.guardar("x", 5);
+        CalculadoraRPN calcI1 = new CalculadoraRPN(i1, mi1);
+        verificar("integracion: guardar x=5 y evaluar 'x 3 +' = 8", calcI1.evaluar("x 3 +") == 8);
+        verificar("integracion: el flujo completo deja el resultado en la pila", i1.verTope() == 8 && i1.tamano() == 1);
+
+        Pila i2 = new Pila();
+        Memoria mi2 = new Memoria();
+        mi2.guardar("x", 5);
+        CalculadoraRPN calcI2 = new CalculadoraRPN(i2, mi2);
+        i2.apilar(8);
+        int[] pos = UtilidadesPila.buscar(i2, 8);
+        verificar("integracion: buscar el resultado 8 en la pila", pos.length == 1 && pos[0] == 0);
+
+        Pila i3 = new Pila();
+        i3.reemplazarContenido(new double[]{5, 3, 5, 8});
+        UtilidadesPila.ordenarDescendente(i3);
+        verificar("integracion: ordenar la pila del flujo", java.util.Arrays.equals(i3.aArreglo(), new double[]{8, 5, 5, 3}));
+
+        // Casos de error combinados
+        Pila i4 = new Pila();
+        i4.apilar(99);
+        Memoria mi4 = new Memoria();
+        CalculadoraRPN calcI4 = new CalculadoraRPN(i4, mi4);
+        verificarError("integracion: error por variable inexistente en la expresion", () -> calcI4.evaluar("y 3 +"), "variable");
+        verificar("integracion: error por variable restaura la pila", i4.tamano() == 1 && i4.verTope() == 99);
+
+        Pila i5 = new Pila();
+        CalculadoraRPN calcI5 = new CalculadoraRPN(i5, new Memoria());
+        verificarError("integracion: error combinado en pila vacia", () -> calcI5.evaluar("+"), "operandos");
+        verificar("integracion: pila vacia no se corrompe", i5.estaVacia());
+
+        Pila i6 = new Pila();
+        CalculadoraRPN calcI6 = new CalculadoraRPN(i6, new Memoria());
+        verificarError("integracion: error combinado por division por cero", () -> calcI6.evaluar("10 0 /"), "División");
+
         System.out.println(fallos == 0 ? "\nSin fallos." : "\nFallos: " + fallos);
         if (fallos > 0) System.exit(1);
     }

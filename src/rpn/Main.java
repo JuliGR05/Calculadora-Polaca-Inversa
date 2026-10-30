@@ -6,8 +6,8 @@ public class Main {
 
     public static void main(String[] args) {
         Pila pila = new Pila();
-        CalculadoraRPN calculadora = new CalculadoraRPN(pila);
         Memoria memoria = new Memoria();
+        CalculadoraRPN calculadora = new CalculadoraRPN(pila, memoria);
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("=== Calculadora Polaca Inversa (RPN) ===");
@@ -24,7 +24,7 @@ public class Main {
             try {
                 switch (opcion.trim()) {
                     case "1":
-                        ingresarExpresion(scanner, calculadora, memoria, pila);
+                        ingresarExpresion(scanner, calculadora, pila);
                         break;
                     case "2":
                         verPila(pila);
@@ -72,7 +72,7 @@ public class Main {
     }
 
     private static void ingresarExpresion(Scanner scanner, CalculadoraRPN calculadora,
-                                          Memoria memoria, Pila pila) {
+                                          Pila pila) {
         String expresion = leerLinea(scanner, "Expresión RPN (ej: 3 4 + 2 *): ");
         if (expresion == null) {
             return;
@@ -82,14 +82,7 @@ public class Main {
             return;
         }
 
-        String[] tokens = expresion.trim().split("\\s+");
-        for (int i = 0; i < tokens.length; i++) {
-            if (memoria.existe(tokens[i])) {
-                tokens[i] = String.valueOf(memoria.obtener(tokens[i]));
-            }
-        }
-
-        double resultado = calculadora.evaluar(String.join(" ", tokens));
+        double resultado = calculadora.evaluar(expresion);
         System.out.println("Resultado: " + resultado);
         System.out.println("Pila: " + pila);
     }

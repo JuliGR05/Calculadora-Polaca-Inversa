@@ -207,6 +207,33 @@ public class PruebasRpn {
             verificar("obtener variable inexistente lanza error", true);
         }
         
+        // ---- Pruebas del issue #5 ----
+        Pila v1 = new Pila();
+        Memoria mv1 = new Memoria();
+        mv1.guardar("x", 5);
+        CalculadoraRPN calcV1 = new CalculadoraRPN(v1, mv1);
+        verificar("x 3 + = 8 con x = 5", calcV1.evaluar("x 3 +") == 8);
+        verificar("variable usada deja un solo resultado", v1.tamano() == 1);
+
+        Pila v2 = new Pila();
+        CalculadoraRPN calcV2 = new CalculadoraRPN(v2, mv1);
+        verificar("x x * = 25 (variable repetida)", calcV2.evaluar("x x *") == 25);
+
+        Pila v3 = new Pila();
+        v3.apilar(99);
+        CalculadoraRPN calcV3 = new CalculadoraRPN(v3, new Memoria());
+        verificarError("variable inexistente da error claro",
+                () -> calcV3.evaluar("y 3 +"), "variable definida");
+        verificar("error por variable inexistente restaura la pila",
+                v3.tamano() == 1 && v3.verTope() == 99);
+
+        Pila v4 = new Pila();
+        Memoria mv4 = new Memoria();
+        mv4.guardar("y", 2.5);
+        CalculadoraRPN calcV4 = new CalculadoraRPN(v4, mv4);
+        calcV4.procesarToken("y");
+        verificar("procesarToken apila el valor de la variable", v4.verTope() == 2.5);
+
         System.out.println(fallos == 0 ? "\nSin fallos." : "\nFallos: " + fallos);
         if (fallos > 0) System.exit(1);
     }
